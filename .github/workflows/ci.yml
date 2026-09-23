@@ -1,0 +1,44 @@
+name: GiftLink CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install backend dependencies
+        working-directory: giftlink-backend
+        run: npm ci
+
+      - name: Validate backend
+        working-directory: giftlink-backend
+        run: node --check app.js && node --check models/db.js && node --check routes/giftRoutes.js && node --check routes/searchRoutes.js && node --check routes/authRoutes.js
+
+      - name: Install frontend dependencies
+        working-directory: giftlink-frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: giftlink-frontend
+        run: npm run build
+
+      - name: Install sentiment dependencies
+        working-directory: sentiment
+        run: npm install
+
+      - name: Validate sentiment service
+        working-directory: sentiment
+        run: node --check index.js
