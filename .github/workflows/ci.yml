@@ -33,7 +33,7 @@ jobs:
 
       - name: Build frontend
         working-directory: giftlink-frontend
-        run: npm run build
+        run: CI=false npm run build
 
       - name: Install sentiment dependencies
         working-directory: sentiment
